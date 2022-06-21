@@ -1,0 +1,97 @@
+{
+	"id": "mock-script",
+	"title": "שיחה 10",
+	"description": "שיחה פשוטה בין בוט לתלמיד",
+	"photo": "path/to/theme/photo.jpg",
+	"level": 1,
+	"category": "social",
+	"createdBy": "teacher",
+	"start": "1000",
+	"flow": {
+		"1000": [
+			"1001",
+			"1002"
+		],
+		"1001": [
+			"1003"
+		],
+		"1002": [
+			"1004"
+		],
+		"1003": [
+			"1005"
+		],
+		"1004":[
+			"1002",
+			"1001"
+		"1005": [
+			"1006"
+		],
+		"1006": []
+	},
+	"sentences": {
+		"1000": {
+			"id_": "1000",
+			"arabic": "انا من القدس من وين انا؟",
+			"arabicWithoutDiacritics": "انا من القدس من وين انا؟",
+			"hebrew": "אני מרירושלים, מאיפה אני?",
+			"transcription": "אנא מן אלקדס מן וין אנא?",
+			"voiceRecPath": "https://madrasa-voice.s3.eu-west-2.amazonaws.com/bot/3.mp3",
+			"keywords": []
+		},
+		"1001": {
+			"id_": "1001",
+			"arabic": "انت من القدس",
+			"arabicWithoutDiacritics": "انت من القدس",
+			"hebrew": "אתה מירושלים",
+			"transcription": "אנת מן אלקדס",
+			"voiceRecPath": "https://madrasa-voice.s3.eu-west-2.amazonaws.com/bot/2.mp3",
+            "keywords": ["القدس","من","انت"]
+		},
+		"1002": {
+			"id_": "1002",
+			"arabic": "انت من بئر السبع ",
+			"arabicWithoutDiacritics": "انت من بئر السبع",
+			"hebrew": "אתה מבאר שבע*",
+			"transcription": "אנת מן באר אלסבע",
+			"voiceRecPath": "",
+			"keywords": ["انت","من"]
+		},
+		"1003": {
+			"id_": "1003",
+			"arabic": "ممتاز! انا وعدنان من القدس. من وين احنا؟",
+			"arabicWithoutDiacritics": "ممتاز! انا وعدنان من القدس. من وين احنا؟",
+			"hebrew": "מצוין! אני ועדנאן מירושלים מאיפה אנחנו?",
+			"transcription": "ממתאז! אנא ועדנאן מן אלקדס. מן וין אחנא?",
+			"voiceRecPath": "https://madrasa-voice.s3.eu-west-2.amazonaws.com/bot/1.mp3",
+			"keywords": []
+		},
+		"1004": {
+			"id_": "1004",
+			"arabic": "انا مس من هناك حاول كمان مرة",
+			"arabicWithoutDiacritics": "انا مس من هناك حاول كمان مرة",
+			"hebrew": "אני לא משם, נסה שוב",
+			"transcription": "אנא מש מן הנאכ חאול/חאולי כמאן מרה",
+			"voiceRecPath": "https://madrasa-voice.s3.eu-west-2.amazonaws.com/bot/5.mp3",
+			"keywords": []
+		},
+		"1005": {
+			"id_": "1005",
+			"arabic": "انت وعدنان من القدس",
+			"arabicWithoutDiacritics": "انت وعدنان من القدس",
+			"hebrew": "אתה ועדנאן מירושלים",
+			"transcription": "אנת ועדנאן מן אלקדס",
+			"voiceRecPath": "https://madrasa-voice.s3.eu-west-2.amazonaws.com/bot/4.mp3",
+			"keywords": ["انت","وعدنان","من","القدس"]
+		},
+		"1006": {
+			"id_": "1006",
+			"arabic": "كل الاحترام!",
+			"arabicWithoutDiacritics": "كل الاحترام!",
+			"hebrew": "כל הכבוד!",
+			"transcription": "כל אלאחתראם!",
+			"voiceRecPath": "https://madrasa-voice.s3.eu-west-2.amazonaws.com/bot/6.mp3",
+			"keywords": []
+		}
+	}
+}
