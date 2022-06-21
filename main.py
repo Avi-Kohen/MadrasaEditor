@@ -1,32 +1,32 @@
+from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QApplication, QWidget
-
-# Only needed for access to command line arguments
 import sys
 
-id = 1
-#להוסיף לטעון קובץ או ליצור חדש
-class Sentence():
-    id = id
+index = 1
+
+
+# להוסיף לטעון קובץ או ליצור חדש
+class Sentence:
     voiceRecPath = ""
-    keyword = []
-    def __init__(self,arabic,hebrew,transcription):
+    keywords = []
+
+    def __init__(self, arabic, hebrew, transcription, id_):
         self.arabic = arabic
         self.hebrew = hebrew
         self.transcription = transcription
+        self.id_ = id_
 
 
-# You need one (and only one) QApplication instance per application.
-# Pass in sys.argv to allow command line arguments for your app.
-# If you know you won't use command line arguments QApplication([]) works too.
+# GUI
+class Window(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle('Madrasa Editor')
+        self.setWindowIcon(QIcon("madrasa.png"))
+        self.setGeometry(500, 300, 400, 300)
+
+
 app = QApplication(sys.argv)
-
-# Create a Qt widget, which will be our window.
-window = QWidget()
-window.show()  # IMPORTANT!!!!! Windows are hidden by default.
-
-# Start the event loop.
+window = Window()
+window.show()
 app.exec()
-
-
-# Your application won't reach here until you exit and the event
-# loop has stopped.
