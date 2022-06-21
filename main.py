@@ -1,5 +1,5 @@
 from PyQt6.QtGui import QIcon
-from PyQt6.QtWidgets import QApplication, QWidget
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton
 import sys
 
 index = 1
@@ -23,7 +23,16 @@ class Window(QWidget):
         super().__init__()
         self.setWindowTitle('Madrasa Editor')
         self.setWindowIcon(QIcon("madrasa.png"))
-        self.setGeometry(500, 300, 400, 300)
+        self.setGeometry(500, 300, 550, 300)
+
+        self.choose()
+
+    def choose(self):
+        btn_1 = QPushButton("New Conversation", self)
+        btn_2 = QPushButton("Existing Conversation", self)
+
+        btn_1.setGeometry(50, 150, 200, 100)
+        btn_2.setGeometry(300, 150, 200, 100)
 
 
 app = QApplication(sys.argv)
