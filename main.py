@@ -29,7 +29,6 @@ class EditorWindow(QWidget):
         self.description_box = QLineEdit(self)
         self.description_box.setPlaceholderText('Description')
 
-
         grid = QGridLayout()
         grid.addWidget(self.title_box)
         grid.addWidget(self.description_box)
