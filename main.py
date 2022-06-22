@@ -26,12 +26,13 @@ class EditorWindow(QWidget):
 
         self.title_box = QLineEdit(self)
         self.title_box.setPlaceholderText('Title')
-        self.description_box(self)
+        self.description_box = QLineEdit(self)
         self.description_box.setPlaceholderText('Description')
 
 
         grid = QGridLayout()
         grid.addWidget(self.title_box)
+        grid.addWidget(self.description_box)
         self.setLayout(grid)
 
 class MainWindow(QWidget):
