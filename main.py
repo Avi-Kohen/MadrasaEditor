@@ -23,16 +23,34 @@ class EditorWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('New Conversation')
-
+        self.setGeometry(500,300,350,300)
+        self.label = QLabel("Please fill the following fields:", self)
         self.title_box = QLineEdit(self)
         self.title_box.setPlaceholderText('Title')
         self.description_box = QLineEdit(self)
         self.description_box.setPlaceholderText('Description')
+        self.photo_box = QLineEdit(self)
+        self.photo_box.setText("path/to/theme/photo.jpg")
+        self.level_box = QLineEdit(self)
+        self.level_box.setPlaceholderText('Level')
+        self.category_box = QLineEdit(self)
+        self.category_box.setPlaceholderText('Category')
+        self.createdBy_box = QLineEdit(self)
+        self.createdBy_box.setPlaceholderText('Created By')
+        self.next_button = QPushButton("Next", self)
 
         grid = QGridLayout()
+        grid.addWidget(self.label)
         grid.addWidget(self.title_box)
         grid.addWidget(self.description_box)
+        grid.addWidget(self.photo_box)
+        grid.addWidget(self.level_box)
+        grid.addWidget(self.category_box)
+        grid.addWidget(self.createdBy_box)
+        grid.addWidget(self.next_button)
+
         self.setLayout(grid)
+
 
 class MainWindow(QWidget):
     def __init__(self):
