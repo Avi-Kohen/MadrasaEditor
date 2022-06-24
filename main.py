@@ -1,8 +1,11 @@
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout
 import sys
+import json
+import codecs
 
 index = 1
+content = dict()
 
 
 # להוסיף לטעון קובץ או ליצור חדש
@@ -23,16 +26,18 @@ class EditorWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('New Conversation')
-        self.setGeometry(500,300,350,300)
+        self.setGeometry(500, 300, 350, 300)
         self.label = QLabel("Please fill the following fields:", self)
         self.title_box = QLineEdit(self)
         self.title_box.setPlaceholderText('Title')
         self.description_box = QLineEdit(self)
         self.description_box.setPlaceholderText('Description')
+        self.description_box.setText("שיחה פשוטה בין בוט לתלמיד")
         self.photo_box = QLineEdit(self)
         self.photo_box.setText("path/to/theme/photo.jpg")
         self.level_box = QLineEdit(self)
         self.level_box.setPlaceholderText('Level')
+        self.level_box.setText("1")
         self.category_box = QLineEdit(self)
         self.category_box.setPlaceholderText('Category')
         self.createdBy_box = QLineEdit(self)
@@ -50,6 +55,27 @@ class EditorWindow(QWidget):
         grid.addWidget(self.next_button)
 
         self.setLayout(grid)
+
+        self.next_button.clicked.connect(self.create_json)
+
+    def create_json(self):
+        # self.hide()
+
+        content["id"] = "mock-script"
+        content["title"] = self.title_box.text()
+        content["description"] = self.description_box.text()
+        print(self.description_box.text())
+        content["photo"] = self.photo_box.text()
+        content["level"] = int(self.level_box.text())
+        content["category"] = self.category_box.text()
+        content["createdBy"] = self.createdBy_box.text()
+        content["start"] = str(index)
+
+        json_object = json.dumps(content, indent=4,ensure_ascii=False)
+
+        # Writing to sample.json
+        with open("conversation.json", "w") as outfile:
+            outfile.write(json_object)
 
 
 class MainWindow(QWidget):
@@ -86,3 +112,5 @@ editor = EditorWindow()
 window = MainWindow()
 window.show()
 app.exec()
+
+f = open("conversation.json", "w+")
