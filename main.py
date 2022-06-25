@@ -2,7 +2,6 @@ from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout
 import sys
 import json
-import codecs
 
 index = 1
 content = dict()
@@ -22,6 +21,14 @@ class Sentence:
 
 # GUI
 
+class SentenceWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle('Sentence adder')
+        self.setGeometry(500, 300, 350, 300)
+
+
+
 class EditorWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -30,6 +37,7 @@ class EditorWindow(QWidget):
         self.label = QLabel("Please fill the following fields:", self)
         self.title_box = QLineEdit(self)
         self.title_box.setPlaceholderText('Title')
+        self.title_box.setText("שיחה")
         self.description_box = QLineEdit(self)
         self.description_box.setPlaceholderText('Description')
         self.description_box.setText("שיחה פשוטה בין בוט לתלמיד")
@@ -40,8 +48,10 @@ class EditorWindow(QWidget):
         self.level_box.setText("1")
         self.category_box = QLineEdit(self)
         self.category_box.setPlaceholderText('Category')
+        self.category_box.setText("Social")
         self.createdBy_box = QLineEdit(self)
         self.createdBy_box.setPlaceholderText('Created By')
+        self.createdBy_box.setText("Teacher")
         self.next_button = QPushButton("Next", self)
 
         grid = QGridLayout()
@@ -59,8 +69,8 @@ class EditorWindow(QWidget):
         self.next_button.clicked.connect(self.create_json)
 
     def create_json(self):
-        # self.hide()
-
+        self.hide()
+        adder.show()
         content["id"] = "mock-script"
         content["title"] = self.title_box.text()
         content["description"] = self.description_box.text()
@@ -70,12 +80,13 @@ class EditorWindow(QWidget):
         content["category"] = self.category_box.text()
         content["createdBy"] = self.createdBy_box.text()
         content["start"] = str(index)
+        content["flow"] = {}
 
-        json_object = json.dumps(content, indent=4,ensure_ascii=False)
-
-        # Writing to sample.json
-        with open("conversation.json", "w") as outfile:
-            outfile.write(json_object)
+        # json_object = json.dumps(content, indent=4, ensure_ascii=False)
+        #
+        # # Writing to sample.json
+        # with open("conversation.json", "w") as outfile:
+        #     outfile.write(json_object)
 
 
 class MainWindow(QWidget):
@@ -109,6 +120,7 @@ class MainWindow(QWidget):
 
 app = QApplication(sys.argv)
 editor = EditorWindow()
+adder = SentenceWindow()
 window = MainWindow()
 window.show()
 app.exec()
