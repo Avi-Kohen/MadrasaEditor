@@ -1,6 +1,7 @@
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout
 import sys
+from record import Recorder
 import json
 
 index = 1
@@ -24,9 +25,48 @@ class Sentence:
 class SentenceWindow(QWidget):
     def __init__(self):
         super().__init__()
+        self.recFile = None
         self.setWindowTitle('Sentence adder')
         self.setGeometry(500, 300, 350, 300)
 
+        self.label = QLabel("Enter the first sentence ")
+        self.arabic = QLineEdit(self)
+        self.arabic.setPlaceholderText('Arabic')
+        self.hebrew = QLineEdit(self)
+        self.hebrew.setPlaceholderText('Hebrew')
+        self.transcription = QLineEdit(self)
+        self.transcription.setPlaceholderText('תעתיק')
+        self.record_btn = QPushButton(self)
+        self.record_btn.setText('Record')
+        self.voice = QPushButton(self)
+        self.voice.setIcon(QIcon("play-button.png"))
+
+        grid = QGridLayout()
+        grid.addWidget(self.label)
+        grid.addWidget(self.arabic)
+        grid.addWidget(self.hebrew)
+        grid.addWidget(self.transcription)
+        grid.addWidget(self.record_btn)
+        grid.addWidget(self.voice)
+
+        self.setLayout(grid)
+        self.keepRecording = True
+        self.button_state = 'record'
+        self.recorder = Recorder(channels=2, rate=16000, frames_per_buffer=1024)
+        self.record_btn.clicked.connect(self.on_click)
+
+
+    def on_click(self):
+        if self.button_state == 'record':
+            self.recFile = self.recorder.open('test.mp3', 'wb')
+            self.recFile.start_recording()
+            self.record_btn.setText("Stop")
+            self.button_state = 'stop'
+        else:
+            self.recFile.stop_recording()
+            self.record_btn.setText("Record")
+            self.button_state = 'record'
+            # self.clear_texts()
 
 
 class EditorWindow(QWidget):
