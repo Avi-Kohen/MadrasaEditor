@@ -1,3 +1,8 @@
+import os.path
+from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
+from pydub import AudioSegment
+from pydub.playback import play
+from PyQt6.QtCore import QUrl
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout
 import sys
@@ -21,6 +26,7 @@ class Sentence:
 
 
 # GUI
+
 
 class SentenceWindow(QWidget):
     def __init__(self):
@@ -54,11 +60,17 @@ class SentenceWindow(QWidget):
         self.button_state = 'record'
         self.recorder = Recorder(channels=2, rate=16000, frames_per_buffer=1024)
         self.record_btn.clicked.connect(self.on_click)
+        self.voice.clicked.connect(self.play_sound)
 
+    def play_sound(self):
+        self.full_file_path = os.path.join(os.getcwd(), 'test.wav')
+        self.url = QUrl.fromLocalFile(self.full_file_path)
+        self.sound = AudioSegment.from_wav("test.wav")
+        play(self.sound)
 
     def on_click(self):
         if self.button_state == 'record':
-            self.recFile = self.recorder.open('test.mp3', 'wb')
+            self.recFile = self.recorder.open('test.wav', 'wb')
             self.recFile.start_recording()
             self.record_btn.setText("Stop")
             self.button_state = 'stop'
