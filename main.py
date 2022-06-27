@@ -7,35 +7,27 @@ from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout
 import sys
 from record import Recorder
+
 import json
 
-index = 1
+index = 1000
 content = dict()
+flow = dict()
+sentences = dict()
 
-
-# להוסיף לטעון קובץ או ליצור חדש
-class Sentence:
-    voiceRecPath = ""
-    keywords = []
-
-    def __init__(self, arabic, hebrew, transcription, id_):
-        self.arabic = arabic
-        self.hebrew = hebrew
-        self.transcription = transcription
-        self.id_ = id_
-
+# class Tree:
+#     def __init__(self):
+#         self.
 
 # GUI
-
-
 class SentenceWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.recFile = None
         self.setWindowTitle('Sentence adder')
         self.setGeometry(500, 300, 350, 300)
-
-        self.label = QLabel("Enter the first sentence ")
+        flow[str(index)] = []
+        self.label = QLabel("Enter sentence ")
         self.arabic = QLineEdit(self)
         self.arabic.setPlaceholderText('Arabic')
         self.hebrew = QLineEdit(self)
@@ -46,6 +38,19 @@ class SentenceWindow(QWidget):
         self.record_btn.setText('Record')
         self.voice = QPushButton(self)
         self.voice.setIcon(QIcon("play-button.png"))
+        self.keywords = QLineEdit(self)
+        self.keywords.setPlaceholderText("Keywords (separated by comma and a space)")
+        self.done = QPushButton(self)
+        self.done.setText("Done")
+        self.done.clicked.connect(self.finish)
+        self.done.setEnabled(False)
+        self.enter = QPushButton(self)
+        self.enter.setText("Enter")
+        self.enter.clicked.connect(self.create_sentence)
+        self.add_response = QPushButton(self)
+        self.add_response.setText("Add Response")
+        self.advance = QPushButton(self)
+
 
         grid = QGridLayout()
         grid.addWidget(self.label)
@@ -54,6 +59,9 @@ class SentenceWindow(QWidget):
         grid.addWidget(self.transcription)
         grid.addWidget(self.record_btn)
         grid.addWidget(self.voice)
+        grid.addWidget(self.keywords)
+        grid.addWidget(self.done, 7, 1, 2, 1)
+        grid.addWidget(self.enter,7,0,2,1)
 
         self.setLayout(grid)
         self.keepRecording = True
@@ -62,15 +70,34 @@ class SentenceWindow(QWidget):
         self.record_btn.clicked.connect(self.on_click)
         self.voice.clicked.connect(self.play_sound)
 
+    def create_sentence(self):
+        sentences[str(index)] = {"id_" : str(index), "arabic":self.arabic.text(), "arabicWithoutDiacritics":self.arabic.text()
+                                 ,"hebrew":self.hebrew.text(),"transcription": self.transcription.text(),
+                                 "voiceRecPath":"test_" + str(index) + ".wav", "keywords":self.keywords.text().split(", ")}
+        self.done.setEnabled(True)
+        self.enter.setEnabled(False)
+        self.record_btn.setEnabled(False)
+
+    def finish(self):
+        content["flow"] = flow
+        content["sentences"] = sentences
+        json_object = json.dumps(content, indent=4, ensure_ascii=False)
+
+        # Writing to sample.json
+        with open("conversation.json", "w") as outfile:
+            outfile.write(json_object)
+
+        sys.exit()
+
     def play_sound(self):
         self.full_file_path = os.path.join(os.getcwd(), 'test.wav')
         self.url = QUrl.fromLocalFile(self.full_file_path)
-        self.sound = AudioSegment.from_wav("test.wav")
+        self.sound = AudioSegment.from_wav("test_" + str(index) + ".wav")
         play(self.sound)
 
     def on_click(self):
         if self.button_state == 'record':
-            self.recFile = self.recorder.open('test.wav', 'wb')
+            self.recFile = self.recorder.open('test_' + str(index) + '.wav', 'wb')
             self.recFile.start_recording()
             self.record_btn.setText("Stop")
             self.button_state = 'stop'
@@ -117,22 +144,19 @@ class EditorWindow(QWidget):
         grid.addWidget(self.next_button)
 
         self.setLayout(grid)
+        self.next_button.clicked.connect(self.next_window)
 
-        self.next_button.clicked.connect(self.create_json)
-
-    def create_json(self):
+    def next_window(self):
         self.hide()
         adder.show()
         content["id"] = "mock-script"
         content["title"] = self.title_box.text()
         content["description"] = self.description_box.text()
-        print(self.description_box.text())
         content["photo"] = self.photo_box.text()
         content["level"] = int(self.level_box.text())
         content["category"] = self.category_box.text()
         content["createdBy"] = self.createdBy_box.text()
         content["start"] = str(index)
-        content["flow"] = {}
 
         # json_object = json.dumps(content, indent=4, ensure_ascii=False)
         #
