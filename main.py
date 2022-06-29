@@ -75,7 +75,7 @@ class SentenceWindow(QWidget):
         self.record_btn = QPushButton(self)
         self.record_btn.setText('Record')
         self.voice = QPushButton(self)
-        self.voice.setIcon(QIcon("play-button.png"))
+        self.voice.setIcon(QIcon("play-button.ico"))
         self.voice.setEnabled(False)
         self.keywords = QLineEdit(self)
         self.keywords.setPlaceholderText("Keywords (separated by comma and a space)")
