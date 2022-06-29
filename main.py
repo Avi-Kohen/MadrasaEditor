@@ -61,7 +61,7 @@ class SentenceWindow(QWidget):
         self.id_index = index
         self.recFile = None
         self.setWindowTitle('Sentence adder')
-        self.setGeometry(500, 300, 350, 300)
+        self.setGeometry(500, 300, 350, 400)
         self.label = QLabel("Enter sentence ")
         self.parent_sound = "test_" + str(parent) + ".wav"
         self.parent_voice = QPushButton('Answer to this')
@@ -91,23 +91,27 @@ class SentenceWindow(QWidget):
         self.add_response.setEnabled(False)
         self.add_existing = QPushButton(self)
         self.add_existing.setText('Add Existing')
+        self.add_existing.setEnabled(False)
         self.add_existing.clicked.connect(self.existing)
         # self.advance = QPushButton(self)
         # self.advance.setText("Advance")
 
         grid = QGridLayout()
-        grid.addWidget(self.label, 0, 0)
-        grid.addWidget(self.parent_voice, 0, 1)
-        grid.addWidget(self.arabic, 1, 0, 1, 1)
-        grid.addWidget(self.hebrew, 2, 0, 1, 1)
-        grid.addWidget(self.transcription, 3, 0, 1, 1)
+        grid.addWidget(self.label, 0, 0,1,1)
+        grid.addWidget(self.parent_voice, 0, 1,1,1)
+        grid.addWidget(self.arabic, 1, 0, 1, 2)
+        grid.addWidget(self.hebrew, 2, 0, 1, 2)
+        grid.addWidget(self.transcription, 3, 0, 1, 2)
         grid.addWidget(self.record_btn, 5, 0, 1, 1)
         grid.addWidget(self.voice, 5, 1, 1, 1)
-        grid.addWidget(self.keywords, 6, 0, 1, 1)
-        grid.addWidget(self.done, 9, 0, 1, 1)
-        grid.addWidget(self.enter, 6, 1, 1, 1)
-        grid.addWidget(self.add_response, 8, 0, 2, 1)
-        grid.addWidget(self.add_existing, 8, 1, 2, 1)
+        grid.addWidget(self.keywords, 6, 0, 1, 2)
+        grid.addWidget(self.enter, 7, 1, 1, 1)
+        grid.addWidget(self.add_response, 9, 0, 2, 1)
+        grid.addWidget(self.add_existing, 9, 1, 2, 1)
+        grid.addWidget(self.done, 10, 0, 1, 2)
+
+
+
         # grid.addWidget(self.advance,8,1,1,1)
         if self.parent is not None:
             self.parent_voice.clicked.connect(self.play_sound_parent)
@@ -149,6 +153,7 @@ class SentenceWindow(QWidget):
         self.done.setEnabled(True)
         self.enter.setEnabled(False)
         self.record_btn.setEnabled(False)
+        self.add_existing.setEnabled(True)
         self.add_response.setEnabled(True)
         if self.parent is not None:
             flow[str(self.parent)].append(str(self.id_index))
@@ -159,7 +164,7 @@ class SentenceWindow(QWidget):
             content["sentences"] = sentences
             json_object = json.dumps(content, indent=4, ensure_ascii=False)
 
-            with open("conversation.json", "w") as outfile:
+            with open("conversation.json", "w",encoding="utf8") as outfile:
                 outfile.write(json_object)
             sys.exit()
         else:
