@@ -20,6 +20,25 @@ sentences = dict()
 #     def __init__(self):
 #         self.
 
+
+def play_sound(file):
+    full_file_path = os.path.join(os.getcwd(), file)
+    url = QUrl.fromLocalFile(full_file_path)
+    sound = AudioSegment.from_wav(file)
+    play(sound)
+
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+
 # GUI
 class ExistingList(QWidget):
     def __init__(self, calling_index):
@@ -45,7 +64,9 @@ class ExistingList(QWidget):
             self.table.setItem(row, 0, item)
             self.table.setItem(row, 1, QTableWidgetItem(sentences[i]['arabic']))
             self.table.setItem(row, 2, QTableWidgetItem(sentences[i]['hebrew']))
-            self.table.setItem(row, 3, QTableWidgetItem(sentences[i]['voiceRecPath']))
+            temp = QPushButton(sentences[i]['voiceRecPath'])
+            temp.clicked.connect(lambda: play_sound(file=sentences[i]['voiceRecPath']))
+            self.table.setCellWidget(row, 3, temp)
 
     def retrieveCheckboxValues(self):
         for row in range(self.table.rowCount()):
@@ -75,7 +96,7 @@ class SentenceWindow(QWidget):
         self.record_btn = QPushButton(self)
         self.record_btn.setText('Record')
         self.voice = QPushButton(self)
-        self.voice.setIcon(QIcon("play-button.ico"))
+        self.voice.setIcon(QIcon(resource_path("play-button.ico")))
         self.voice.setEnabled(False)
         self.keywords = QLineEdit(self)
         self.keywords.setPlaceholderText("Keywords (separated by comma and a space)")
@@ -86,6 +107,7 @@ class SentenceWindow(QWidget):
         self.enter = QPushButton(self)
         self.enter.setText("Enter")
         self.enter.clicked.connect(self.create_sentence)
+        self.enter.setEnabled(False)
         self.add_response = QPushButton(self)
         self.add_response.setText("Add Response")
         self.add_response.setEnabled(False)
@@ -97,8 +119,8 @@ class SentenceWindow(QWidget):
         # self.advance.setText("Advance")
 
         grid = QGridLayout()
-        grid.addWidget(self.label, 0, 0,1,1)
-        grid.addWidget(self.parent_voice, 0, 1,1,1)
+        grid.addWidget(self.label, 0, 0, 1, 1)
+        grid.addWidget(self.parent_voice, 0, 1, 1, 1)
         grid.addWidget(self.arabic, 1, 0, 1, 2)
         grid.addWidget(self.hebrew, 2, 0, 1, 2)
         grid.addWidget(self.transcription, 3, 0, 1, 2)
@@ -110,12 +132,9 @@ class SentenceWindow(QWidget):
         grid.addWidget(self.add_existing, 9, 1, 2, 1)
         grid.addWidget(self.done, 10, 0, 1, 2)
 
-
-
         # grid.addWidget(self.advance,8,1,1,1)
         if self.parent is not None:
-            self.parent_voice.clicked.connect(self.play_sound_parent)
-        print(self.parent)
+            self.parent_voice.clicked.connect(lambda: play_sound(str(self.parent.id_index) + ".wav"))
 
         self.add_response.clicked.connect(self.continues_talking)
         self.popups = []
@@ -125,7 +144,7 @@ class SentenceWindow(QWidget):
         self.button_state = 'record'
         self.recorder = Recorder(channels=2, rate=16000, frames_per_buffer=1024)
         self.record_btn.clicked.connect(self.on_click)
-        self.voice.clicked.connect(self.play_sound)
+        self.voice.clicked.connect(lambda: play_sound(str(self.id_index) + ".wav"))
 
     def existing(self):
         existing_list = ExistingList(calling_index=self.id_index)
@@ -135,9 +154,10 @@ class SentenceWindow(QWidget):
     def continues_talking(self):
         global index
         index += 1
-        a = SentenceWindow(self.id_index)
+        a = SentenceWindow(self)
         a.parent_voice.show()
         a.show()
+        self.hide()
         self.popups.append(a)
 
     def create_sentence(self):
@@ -148,7 +168,7 @@ class SentenceWindow(QWidget):
         sentences[str(self.id_index)] = {"id_": str(self.id_index), "arabic": self.arabic.text(),
                                          "arabicWithoutDiacritics": self.arabic.text()
             , "hebrew": self.hebrew.text(), "transcription": self.transcription.text(),
-                                         "voiceRecPath": "test_" + str(self.id_index) + ".wav",
+                                         "voiceRecPath": str(self.id_index) + ".wav",
                                          "keywords": keyword}
         self.done.setEnabled(True)
         self.enter.setEnabled(False)
@@ -156,7 +176,7 @@ class SentenceWindow(QWidget):
         self.add_existing.setEnabled(True)
         self.add_response.setEnabled(True)
         if self.parent is not None:
-            flow[str(self.parent)].append(str(self.id_index))
+            flow[str(self.parent.id_index)].append(str(self.id_index))
 
     def finish(self):
         if self.parent is None:
@@ -164,28 +184,16 @@ class SentenceWindow(QWidget):
             content["sentences"] = sentences
             json_object = json.dumps(content, indent=4, ensure_ascii=False)
 
-            with open("conversation.json", "w",encoding="utf8") as outfile:
+            with open("conversation.json", "w", encoding="utf8") as outfile:
                 outfile.write(json_object)
             sys.exit()
         else:
+            self.parent.show()
             self.close()
-
-    def play_sound_parent(self):
-        print(self.parent)
-        self.full_file_path = os.path.join(os.getcwd(), 'test_' + str(self.parent) + '.wav')
-        self.url = QUrl.fromLocalFile(self.full_file_path)
-        self.sound = AudioSegment.from_wav("test_" + str(self.parent) + ".wav")
-        play(self.sound)
-
-    def play_sound(self):
-        self.full_file_path = os.path.join(os.getcwd(), 'test_' + str(self.id_index) + '.wav')
-        self.url = QUrl.fromLocalFile(self.full_file_path)
-        self.sound = AudioSegment.from_wav("test_" + str(self.id_index) + ".wav")
-        play(self.sound)
 
     def on_click(self):
         if self.button_state == 'record':
-            self.recFile = self.recorder.open('test_' + str(self.id_index) + '.wav', 'wb')
+            self.recFile = self.recorder.open(str(self.id_index) + '.wav', 'wb')
             self.recFile.start_recording()
             self.record_btn.setText("Stop")
             self.button_state = 'stop'
@@ -195,7 +203,9 @@ class SentenceWindow(QWidget):
             self.record_btn.setText("Record")
             self.button_state = 'record'
             self.voice.setEnabled(True)
+            self.enter.setEnabled(True)
             # self.clear_texts()
+
 
 
 class EditorWindow(QWidget):
@@ -258,7 +268,7 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Madrasa Bot Editor')
-        self.setWindowIcon(QIcon("madrasa.png"))
+        self.setWindowIcon(QIcon(resource_path("madrasa.ico")))
         self.setGeometry(500, 300, 550, 300)
 
         self.welcome_label = QLabel("Welcome to Madrasa Bot Editor!", self)
