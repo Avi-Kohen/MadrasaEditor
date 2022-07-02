@@ -157,7 +157,7 @@ class SentenceWindow(QWidget):
         a = SentenceWindow(self)
         a.parent_voice.show()
         a.show()
-        self.hide()
+        self.done.setEnabled(False)
         self.popups.append(a)
 
     def create_sentence(self):
@@ -188,7 +188,7 @@ class SentenceWindow(QWidget):
                 outfile.write(json_object)
             sys.exit()
         else:
-            self.parent.show()
+            self.parent.done.setEnabled(True)
             self.close()
 
     def on_click(self):
